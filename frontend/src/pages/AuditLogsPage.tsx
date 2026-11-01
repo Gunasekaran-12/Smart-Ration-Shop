@@ -36,8 +36,8 @@ export const AuditLogsPage: React.FC = () => {
 
   return (
     <PageContainer
-      title="System Audit & Security Logs"
-      subtitle="Read-only tamper-proof administrative ledger recording user access, transactions, and adjustments"
+      title="System Activity Logs"
+      subtitle="Read-only security ledger showing all user logins, ration distributions, and stock changes"
     >
       {/* Filters Bar */}
       <motion.div

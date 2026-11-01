@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, LogOut, Sparkles, Store } from 'lucide-react';
+import { Bell, LogOut, Store, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { notificationApi, shopStatusApi } from '../services';
 import type { NotificationItem } from '../types';
@@ -8,9 +8,15 @@ import SmartRationLogo from './SmartRationLogo';
 
 interface NavbarProps {
   isSseConnected: boolean;
+  isMobileMenuOpen?: boolean;
+  onToggleMobileMenu?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  isSseConnected,
+  isMobileMenuOpen,
+  onToggleMobileMenu,
+}) => {
   const { user, logout } = useAuth();
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -49,7 +55,6 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
       setIsShopOpen(updated.isActive !== undefined ? !isShopOpen : !isShopOpen);
     } catch (e) {
       console.error('Failed to toggle shop status', e);
-      // Optimistic toggle for visual demo feedback
       setIsShopOpen(!isShopOpen);
     } finally {
       setIsTogglingShop(false);
@@ -58,31 +63,40 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const getRoleBadgeColor = (role?: string) => {
+  const getRoleBadge = (role?: string) => {
     switch (role) {
       case 'SUPER_ADMIN':
-        return 'bg-purple-500/15 text-purple-300 border-purple-500/30';
+        return { label: 'Super Admin', style: 'bg-purple-500/15 text-purple-300 border-purple-500/30' };
       case 'SHOP_OPERATOR':
-        return 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.2)]';
+        return { label: 'Shop Operator', style: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' };
       case 'AUDITOR':
-        return 'bg-amber-500/15 text-amber-300 border-amber-500/30';
+        return { label: 'Auditor', style: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30' };
       case 'BENEFICIARY':
-        return 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30';
+        return { label: 'Cardholder', style: 'bg-amber-500/15 text-amber-300 border-amber-500/30' };
       default:
-        return 'bg-slate-800 text-slate-300 border-slate-700';
+        return { label: 'Staff', style: 'bg-slate-800 text-slate-300 border-slate-700' };
     }
   };
 
+  const roleBadge = getRoleBadge(user?.role);
+
   return (
-    <header className="sticky top-0 z-30 bg-[#070d18]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.5)] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Left: Brand Emblem & Logo */}
-        <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-30 bg-[#091120]/95 backdrop-blur-xl border-b border-slate-800/80 shadow-md">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        {/* Left: Mobile Menu Toggle + Brand Logo */}
+        <div className="flex items-center gap-2.5 sm:gap-4">
+          <button
+            onClick={onToggleMobileMenu}
+            className="md:hidden p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 border border-slate-700/60 transition-colors cursor-pointer"
+            aria-label="Toggle navigation menu"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
           <SmartRationLogo size="sm" />
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-2.5 sm:gap-3 md:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {/* Shop Operating Status Pill / Toggle */}
           <div className="flex items-center">
             {user?.role === 'SHOP_OPERATOR' || user?.role === 'SUPER_ADMIN' ? (
@@ -90,10 +104,10 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
                 onClick={handleToggleShopStatus}
                 disabled={isTogglingShop}
                 title="Click to toggle Fair Price Shop OPEN / CLOSED status"
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold border transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
                   isShopOpen
-                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25 shadow-[0_0_12px_rgba(16,185,129,0.25)]'
-                    : 'bg-rose-500/15 border-rose-500/40 text-rose-300 hover:bg-rose-500/25 shadow-[0_0_12px_rgba(244,63,94,0.25)]'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25'
+                    : 'bg-rose-500/15 border-rose-500/40 text-rose-300 hover:bg-rose-500/25'
                 }`}
               >
                 <span
@@ -102,33 +116,24 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
                   }`}
                 />
                 <Store size={13} />
-                <span>FPS: {isShopOpen ? 'OPEN' : 'CLOSED'}</span>
+                <span>Shop: {isShopOpen ? 'Open' : 'Closed'}</span>
               </button>
             ) : (
               <div
                 title="Central Fair Price Shop (09:00 AM - 05:30 PM)"
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <Store size={13} />
-                <span className="hidden sm:inline">SHOP: OPEN</span>
+                <span className="hidden sm:inline">Shop Open</span>
               </div>
             )}
           </div>
 
-          {/* Nature Leaves & Sand Live Indicator */}
+          {/* Live Telemetry Status Pill */}
           <div
-            title="Falling green leaves & sand atmospheric engine active"
-            className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 shadow-sm"
-          >
-            <Sparkles size={13} className="text-emerald-400 animate-pulse" />
-            <span className="text-[10px] tracking-wide text-emerald-300 font-mono">LEAVES & SAND FLOW</span>
-          </div>
-
-          {/* Live SSE Status Badge */}
-          <div
-            title={isSseConnected ? 'Live real-time telemetry stream active' : 'Connecting to live stream...'}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-semibold bg-slate-900/90 border border-white/10 text-slate-300 shadow-sm"
+            title={isSseConnected ? 'Live server connection active' : 'Connecting to live updates...'}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-700/60 text-slate-300"
           >
             <span className="relative flex h-2 w-2">
               {isSseConnected && (
@@ -136,12 +141,12 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
               )}
               <span
                 className={`relative inline-flex rounded-full h-2 w-2 ${
-                  isSseConnected ? 'bg-emerald-400 shadow-[0_0_10px_#10b981]' : 'bg-amber-400'
+                  isSseConnected ? 'bg-emerald-400' : 'bg-amber-400'
                 }`}
               />
             </span>
-            <span className="hidden sm:inline font-mono text-[11px] font-bold text-slate-300">
-              {isSseConnected ? 'LIVE' : 'CONNECTING'}
+            <span className="hidden sm:inline text-[11px] font-semibold text-slate-300">
+              {isSseConnected ? 'Live' : 'Connecting'}
             </span>
           </div>
 
@@ -149,11 +154,12 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
           <div className="relative">
             <button
               onClick={() => setIsNotifOpen(!isNotifOpen)}
-              className="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-white/10 transition-colors"
+              aria-label="View notifications"
+              className="relative p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60 transition-colors cursor-pointer"
             >
-              <Bell size={19} />
+              <Bell size={18} />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-[10px] font-bold text-slate-950 shadow-md">
+                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] font-bold text-slate-950 shadow-sm">
                   {unreadCount}
                 </span>
               )}
@@ -165,16 +171,16 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 mt-2 w-80 sm:w-96 bg-slate-900/95 border border-emerald-500/30 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-4 z-50 space-y-3 backdrop-blur-2xl text-slate-100"
+                  className="absolute right-0 mt-2 w-80 sm:w-96 bg-[#0b1528] border border-slate-700/80 rounded-2xl shadow-2xl p-4 z-50 space-y-3 backdrop-blur-2xl text-slate-100"
                 >
-                  <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                     <h3 className="font-bold text-sm text-white">Notifications</h3>
-                    <span className="text-xs text-slate-400 font-mono">{unreadCount} unread</span>
+                    <span className="text-xs text-slate-400">{unreadCount} unread</span>
                   </div>
 
                   <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
                     {notifications.length === 0 ? (
-                      <p className="text-xs text-center py-6 text-slate-400">No notifications</p>
+                      <p className="text-xs text-center py-6 text-slate-400">No new notifications</p>
                     ) : (
                       notifications.slice(0, 10).map((n) => (
                         <div
@@ -182,8 +188,8 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
                           onClick={() => markRead(n.id)}
                           className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
                             n.isRead
-                              ? 'bg-slate-800/40 border-white/5 text-slate-400'
-                              : 'bg-emerald-500/10 border-emerald-500/30 text-white shadow-sm hover:border-emerald-400'
+                              ? 'bg-slate-900/60 border-slate-800 text-slate-400'
+                              : 'bg-emerald-500/10 border-emerald-500/30 text-white shadow-xs hover:border-emerald-400'
                           }`}
                         >
                           <div className="flex justify-between items-start gap-2">
@@ -191,11 +197,11 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
                               {n.title}
                             </span>
                             {!n.isRead && (
-                              <span className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 mt-1 shadow-[0_0_8px_#10b981]" />
+                              <span className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 mt-1" />
                             )}
                           </div>
                           <p className="mt-1 text-slate-300 line-clamp-2">{n.message}</p>
-                          <span className="mt-2 block text-[10px] text-slate-400 font-mono">
+                          <span className="mt-2 block text-[10px] text-slate-400">
                             {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </div>
@@ -207,26 +213,24 @@ export const Navbar: React.FC<NavbarProps> = ({ isSseConnected }) => {
             </AnimatePresence>
           </div>
 
-          {/* User Profile Pill */}
+          {/* User Profile & Sign Out */}
           {user && (
-            <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-white/10">
+            <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-800">
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-bold text-white leading-tight">
                   {user.fullName}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border self-end mt-1 font-mono uppercase tracking-wider ${getRoleBadgeColor(
-                    user.role
-                  )}`}
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border self-end mt-1 tracking-wide ${roleBadge.style}`}
                 >
-                  {user.role.replace(/_/g, ' ')}
+                  {roleBadge.label}
                 </span>
               </div>
 
               <button
                 onClick={logout}
-                title="Sign out"
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-colors"
+                title="Sign out of account"
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/30 transition-colors cursor-pointer"
               >
                 <LogOut size={18} />
               </button>

@@ -76,8 +76,8 @@ export const EntitlementsPage: React.FC = () => {
 
   return (
     <PageContainer
-      title="Configurable Monthly Entitlement Engine"
-      subtitle="Define statutory grain quotas, per-member scaling formulas, and subsidized tariffs across poverty thresholds"
+      title="Ration Quotas & Rules"
+      subtitle="View and manage food grain allowance formulas for Antyodaya (AAY), Priority (BPL), and Non-Priority (APL) families"
     >
       {/* Policy Explanation Banner */}
       <motion.div

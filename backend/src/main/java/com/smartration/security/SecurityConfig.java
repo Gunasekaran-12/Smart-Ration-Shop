@@ -68,6 +68,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // SSE endpoint allowed for all authenticated users
                         .requestMatchers("/api/analytics/stream").authenticated()
+                        // Analytics restricted to Super Admin, Shop Operator, Auditor (never Beneficiary)
+                        .requestMatchers("/api/analytics/**").hasAnyRole("SUPER_ADMIN", "SHOP_OPERATOR", "AUDITOR")
                         // Role-specific endpoints
                         .requestMatchers("/api/admin/**").hasRole("SUPER_ADMIN")
                         .requestMatchers("/api/auditor/**").hasAnyRole("SUPER_ADMIN", "AUDITOR")

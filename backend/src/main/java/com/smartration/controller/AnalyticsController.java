@@ -6,6 +6,7 @@ import com.smartration.service.SseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -19,6 +20,7 @@ public class AnalyticsController {
     private final SseService sseService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'AUDITOR', 'SHOP_OPERATOR')")
     public ResponseEntity<DashboardAnalyticsDto> getDashboardData(@RequestParam(required = false) Long shopId) {
         return ResponseEntity.ok(analyticsService.getDashboardAnalytics(shopId));
     }

@@ -200,8 +200,8 @@ export const DistributionPage: React.FC = () => {
 
   return (
     <PageContainer
-      title="Point-of-Sale (POS) Distribution Counter"
-      subtitle="Search cardholders, verify remaining monthly quotas against physical shop stock, and issue digitally signed receipts"
+      title="Distribute Ration"
+      subtitle="Search for a ration card holder, check their remaining monthly food grains, and give out ration with an official receipt"
     >
       {/* Search Bar & Quick Fill */}
       <motion.div

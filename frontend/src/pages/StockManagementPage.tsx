@@ -225,11 +225,11 @@ export const StockManagementPage: React.FC = () => {
 
   return (
     <PageContainer
-      title="Warehouse Stock Ledger & Movements"
-      subtitle="Centralized, persistent inventory management with real-time stock balances and traceable audit ledger"
+      title="Stock Management"
+      subtitle="Track food grain stock, record incoming grain receipts, and check warehouse balances"
       actions={
         user?.role !== 'AUDITOR' ? (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {user?.role === 'SUPER_ADMIN' && (
               <button
                 onClick={() => setIsAddCommodityOpen(true)}

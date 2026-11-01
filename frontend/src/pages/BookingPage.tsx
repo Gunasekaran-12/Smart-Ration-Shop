@@ -118,8 +118,8 @@ export const BookingPage: React.FC = () => {
 
   return (
     <PageContainer
-      title="Ration Slot Booking & Token Management"
-      subtitle="Reserve 30-minute crowd-management slots (max 20 beneficiaries per window) with real-time atomic quota reservation"
+      title="Book Shop Visit"
+      subtitle="Choose a date and time to visit your Fair Price Shop without waiting in long lines"
     >
       {/* Alert Messages */}
       {error && (
