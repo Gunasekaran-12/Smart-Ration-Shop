@@ -1,0 +1,119 @@
+{
+  "timestamp" : "2026-11-01T17:55:00",
+  "triggerReason" : "initial_seed",
+  "shopId" : 1,
+  "commodities" : [ {
+    "id" : 1,
+    "code" : "RICE",
+    "name" : "Boiled Rice (Grade A)",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 3.00,
+    "lowStockThreshold" : 200.00,
+    "isActive" : true
+  }, {
+    "id" : 2,
+    "code" : "WHEAT",
+    "name" : "Whole Milling Wheat",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 2.00,
+    "lowStockThreshold" : 150.00,
+    "isActive" : true
+  }, {
+    "id" : 3,
+    "code" : "SUGAR",
+    "name" : "Refined Cane Sugar",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 13.50,
+    "lowStockThreshold" : 50.00,
+    "isActive" : true
+  }, {
+    "id" : 4,
+    "code" : "DAL",
+    "name" : "Toor Dal (Pulses)",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 30.00,
+    "lowStockThreshold" : 50.00,
+    "isActive" : true
+  }, {
+    "id" : 5,
+    "code" : "OIL",
+    "name" : "Cooking Oil",
+    "measurementUnit" : "LITRE",
+    "subsidizedPrice" : 25.00,
+    "lowStockThreshold" : 50.00,
+    "isActive" : true
+  }, {
+    "id" : 6,
+    "code" : "SALT",
+    "name" : "Fortified Iodized Salt",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 5.00,
+    "lowStockThreshold" : 100.00,
+    "isActive" : true
+  }, {
+    "id" : 7,
+    "code" : "URAD_DAL",
+    "name" : "Urad Dal (Split Black Gram)",
+    "measurementUnit" : "KG",
+    "subsidizedPrice" : 30.00,
+    "lowStockThreshold" : 50.00,
+    "isActive" : true
+  } ],
+  "stockSummaries" : [ {
+    "commodityId" : 1,
+    "commodityCode" : "RICE",
+    "commodityName" : "Boiled Rice (Grade A)",
+    "measurementUnit" : "KG",
+    "currentStock" : 950.00,
+    "isLowStock" : false,
+    "subsidizedPrice" : 3.00
+  }, {
+    "commodityId" : 2,
+    "commodityCode" : "WHEAT",
+    "commodityName" : "Whole Milling Wheat",
+    "measurementUnit" : "KG",
+    "currentStock" : 680.00,
+    "isLowStock" : false,
+    "subsidizedPrice" : 2.00
+  }, {
+    "commodityId" : 3,
+    "commodityCode" : "SUGAR",
+    "commodityName" : "Refined Cane Sugar",
+    "measurementUnit" : "KG",
+    "currentStock" : 0.00,
+    "isLowStock" : true,
+    "subsidizedPrice" : 13.50
+  }, {
+    "commodityId" : 4,
+    "commodityCode" : "DAL",
+    "commodityName" : "Toor Dal (Pulses)",
+    "measurementUnit" : "KG",
+    "currentStock" : 80.00,
+    "isLowStock" : false,
+    "subsidizedPrice" : 30.00
+  }, {
+    "commodityId" : 5,
+    "commodityCode" : "OIL",
+    "commodityName" : "Cooking Oil",
+    "measurementUnit" : "LITRE",
+    "currentStock" : 25.00,
+    "isLowStock" : true,
+    "subsidizedPrice" : 25.00
+  }, {
+    "commodityId" : 6,
+    "commodityCode" : "SALT",
+    "commodityName" : "Fortified Iodized Salt",
+    "measurementUnit" : "KG",
+    "currentStock" : 450.00,
+    "isLowStock" : false,
+    "subsidizedPrice" : 5.00
+  }, {
+    "commodityId" : 7,
+    "commodityCode" : "URAD_DAL",
+    "commodityName" : "Urad Dal (Split Black Gram)",
+    "measurementUnit" : "KG",
+    "currentStock" : 150.00,
+    "isLowStock" : false,
+    "subsidizedPrice" : 30.00
+  } ]
+}
