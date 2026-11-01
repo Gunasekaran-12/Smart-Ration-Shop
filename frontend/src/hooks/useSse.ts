@@ -23,7 +23,7 @@ export const useSse = (onEventReceived?: (event: SseEvent) => void) => {
       return;
     }
 
-    const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+    const API_BASE = import.meta.env.VITE_API_URL || 'https://smart-ration-shop-1gv5.onrender.com/api';
     const sseUrl = `${API_BASE}/analytics/stream?token=${encodeURIComponent(token)}`;
 
     const es = new EventSource(sseUrl);
