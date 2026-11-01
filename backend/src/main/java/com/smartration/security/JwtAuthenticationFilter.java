@@ -1,5 +1,7 @@
+
 package com.smartration.security;
 
+import org.springframework.http.HttpMethod;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,43 +28,75 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
+    protected boolean shouldNotFilter(
+            @NonNull HttpServletRequest request) {
+
+        // Skip JWT authentication for browser CORS preflight requests.
+        return HttpMethod.OPTIONS.matches(request.getMethod());
+    }
+
+    @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            if (StringUtils.hasText(jwt)
+                    && tokenProvider.validateToken(jwt)) {
+
                 String username = tokenProvider.getUsernameFromJwt(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(username);
 
                 if (userDetails.isEnabled()) {
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder.getContext()
+                            .setAuthentication(authentication);
                 }
             }
+
         } catch (Exception ex) {
-            log.error("Could not set user authentication in security context", ex);
+            log.error(
+                    "Could not set user authentication in security context",
+                    ex
+            );
         }
 
         filterChain.doFilter(request, response);
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
+
         String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+
+        if (StringUtils.hasText(bearerToken)
+                && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        // Also allow passing token as query param for Server-Sent Events (SSE) EventSource!
+
+        // Support JWT token in query parameters for SSE EventSource.
         String tokenParam = request.getParameter("token");
+
         if (StringUtils.hasText(tokenParam)) {
             return tokenParam;
         }
+
         return null;
     }
 }
